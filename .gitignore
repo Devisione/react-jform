@@ -1,0 +1,52 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# misc
+.DS_Store
+*.pem
+.idea
+dist
+
+# cache and artifacts
+tsconfig.tsbuildinfo
+.eslintcache
+
+# debug
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+apps/autofaq-web/.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# local files
+
+*.localignore.*
+
+# ========== Yarn ==========
+
+# https://yarnpkg.com/advanced/qa#which-files-should-be-gitignored but nested for e2e directories
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+
+# Uncommeth these lines if you're using Zero-Installs
+!.yarn/cache
+
+# Uncommeth these lines if you're NOT using Zero-Installs
+# .pnp.*
+
+# ========== Yarn ==========

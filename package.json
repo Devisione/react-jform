@@ -1,0 +1,54 @@
+{
+  "name": "react-jform",
+  "version": "0.0.1",
+  "repository": "https://github.com/Devisione/react-jform.git",
+  "author": "Devisione <stipafk@gmail.com>",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "scripts": {
+    "build": "rm -rf dist && yarn build:esm && yarn build:cjs",
+    "build:esm": "tsc",
+    "build:cjs": "tsc --module commonjs --outDir dist/cjs"
+  },
+  "peerDependencies": {
+    "react": "^16.0.0"
+  },
+  "keywords": [
+    "react",
+    "react-form",
+    "react-json-form",
+    "react-jsonschema-form"
+  ],
+  "dependencies": {
+    "@hookform/resolvers": "^2.9.10",
+    "deep-equal": "^2.1.0",
+    "deepmerge": "^4.2.2",
+    "fast-clone": "^1.5.13",
+    "prettier": "^2.8.3",
+    "react": "^17.0.2",
+    "react-hook-form": "^7.38.0",
+    "tslib": "^2.4.1",
+    "uuidv4": "^6.2.13",
+    "yup": "^1.0.0-beta.4"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^12.1.5",
+    "@testing-library/react-hooks": "^8.0.1",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/deep-equal": "^1.0.1",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.2",
+    "@types/react": "^18.0.24",
+    "@types/react-dom": "^18.0.8",
+    "runtypes": "^6.6.0",
+    "typescript": "^4.4.4"
+  }
+}
