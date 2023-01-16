@@ -15,7 +15,9 @@
   "scripts": {
     "build": "rm -rf dist && yarn build:esm && yarn build:cjs",
     "build:esm": "tsc",
-    "build:cjs": "tsc --module commonjs --outDir dist/cjs"
+    "build:cjs": "tsc --module commonjs --outDir dist/cjs",
+    "prepublish": "npm run build",
+    "push_npm": "npm publish"
   },
   "peerDependencies": {
     "react": "^16.0.0"
