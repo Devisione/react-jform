@@ -1,0 +1,5 @@
+.pnp.js
+.yarn/
+**/.next/**
+**/dist/**
+**/tmp/**

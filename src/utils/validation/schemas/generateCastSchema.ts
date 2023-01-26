@@ -77,7 +77,5 @@ export const generateCastSchema = <SFT extends SchemaFieldsTemplate>(
     {} as Record<Extract<keyof SFT, SchemaFieldName>, yup.Schema>
   );
 
-  console.log('>>> shape', shapeOfYupSchema);
-
   return yup.object().shape(shapeOfYupSchema);
 };

@@ -1,31 +1,30 @@
 import { generateItemsConfig } from './generateItemsConfig';
-import { generateElementsConfig } from '../elements/generateElementsConfig';
+import { generateElementsConfig } from '../elements';
 import {
   oneFieldArraySchema,
   OneFieldArraySchemaFieldsTemplate,
   oneFieldSchema,
   OneFieldSchemaFieldsTemplate
 } from '../../../__mocks__';
-import { generateFieldsConfig } from '../fields/generateFieldsConfig';
+import { generateFieldsConfig, parseFieldType } from '../fields';
 import { FormStateItemsConfig, FormValuesFieldPathRuntype } from '../../../types';
 import { ROOT_ID } from '../../../constants';
-import { parseFieldType } from '../fields/parseFieldType';
 
-jest.mock('@libs/utils/String/uuid', () => {
+jest.mock('uuid', () => {
   let i = 0;
-  const originalModule = jest.requireActual('@libs/utils/String/uuid');
+  const originalModule = jest.requireActual('uuid');
 
   return {
     __esModule: true,
     ...originalModule,
-    createUUIDV4: jest.fn().mockImplementation(() => (i++).toString()),
+    v4: jest.fn().mockImplementation(() => (i++).toString()),
     clearIncrementor: () => (i = 0)
   };
 });
 
 describe('generateItemsConfig', () => {
   beforeEach(async () => {
-    const uuid = await import('@libs/utils/String/uuid');
+    const uuid = await import('uuid');
     // @ts-ignore
     uuid.clearIncrementor();
   });
