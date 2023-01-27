@@ -6,9 +6,7 @@ export type FormStateItemId = string;
 
 export type FormStateItemDataState<
   FSFC extends FormStateFieldConfig<SchemaFieldTemplate, SchemaField<SchemaFieldTemplate>>
-> = Pick<FSFC, 'validations' | 'type' | 'fieldName' | 'defaultValue'> & {
-  value: Required<FSFC>['defaultValue'] | undefined;
-};
+> = Pick<FSFC, 'validations' | 'type' | 'fieldName' | 'defaultValue'>;
 
 export type FormStateItem =
   //   <

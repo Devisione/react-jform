@@ -9,15 +9,19 @@ import {
   FormStateElement,
   FormStateFieldsTypes,
   FormValue,
-  SchemaFieldArrayTemplate
+  SchemaFieldArrayTemplate,
+  SchemaFieldsTemplate,
+  FormValues
 } from '../../../types';
 import { parseItemDataState } from './parseItemDataState';
 import { ROOT_ID } from '../../../constants';
 import { concatPaths } from '../../paths';
+import { getByPath } from '../../../helpers';
 
-export type GenerateItemsConfigProps = {
+export type GenerateItemsConfigProps<SFT extends SchemaFieldsTemplate> = {
   elementsConfig: FormStateElementsConfig;
   parentFieldPath?: FormValuesFieldPath;
+  values: Partial<FormValues<SFT>>;
 };
 
 export type GenerateItemsConfigReturn = FormStateItemsConfig;
@@ -28,10 +32,11 @@ type GenerateItemConfigProps = {
   parentFieldPath: FormValuesFieldPath;
 };
 
-export const generateItemsConfig = ({
+export const generateItemsConfig = <SFT extends SchemaFieldsTemplate>({
   elementsConfig,
-  parentFieldPath = FormValuesFieldPathRuntype.check('')
-}: GenerateItemsConfigProps): GenerateItemsConfigReturn => {
+  parentFieldPath = FormValuesFieldPathRuntype.check(''),
+  values
+}: GenerateItemsConfigProps<SFT>): GenerateItemsConfigReturn => {
   const itemsConfig: FormStateItemsConfig = {
     items: {},
     itemsIdsMap: {}
@@ -51,6 +56,7 @@ export const generateItemsConfig = ({
     const fieldPath = element.field
       ? FormValuesFieldPathRuntype.check(concatPaths(parentFieldPath, element.field.fieldName))
       : parentFieldPath;
+    const fieldValue = element.field ? getByPath(values, fieldPath) : undefined;
 
     const { field, elements: childrenElements } = element;
 
@@ -81,20 +87,18 @@ export const generateItemsConfig = ({
       const children = Array.isArray(childrenElements) ? childrenElements : [childrenElements];
 
       if (item.dataState?.type === FormStateFieldsTypes.tuple) {
-        (item.dataState.value as FormValue<SchemaFieldArrayTemplate> | undefined)?.forEach(
-          (_, index) => {
-            const childParentFieldPath = FormValuesFieldPathRuntype.check(
-              concatPaths(fieldPath, index.toString())
-            );
+        (fieldValue as FormValue<SchemaFieldArrayTemplate> | undefined)?.forEach((_, index) => {
+          const childParentFieldPath = FormValuesFieldPathRuntype.check(
+            concatPaths(fieldPath, index.toString())
+          );
 
-            generateChild(
-              {
-                elements: children
-              },
-              childParentFieldPath
-            );
-          }
-        );
+          generateChild(
+            {
+              elements: children
+            },
+            childParentFieldPath
+          );
+        });
       } else {
         children.forEach(child => {
           generateChild(child, fieldPath);

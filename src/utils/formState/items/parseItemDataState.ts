@@ -1,14 +1,6 @@
-import {
-  FormStateFieldConfig,
-  FormStateItemDataState,
-  SchemaField,
-  SchemaFieldTemplate
-} from '../../../types';
+import { FormStateElement, FormStateItemDataState } from '../../../types';
 
-export type ParseItemDataStateProps<SFT extends SchemaFieldTemplate> = FormStateFieldConfig<
-  SFT,
-  SchemaField<SFT>
->;
+export type ParseItemDataStateProps = FormStateElement['field'];
 
 export type ParseItemDataStateReturn =
   //   <
@@ -21,13 +13,16 @@ export type ParseItemDataStateReturn =
 //   ? FormStateItemDataState<FSFC>
 //   : undefined;
 
-export const parseItemDataState = <SFT extends SchemaFieldTemplate>(
-  elementField: ParseItemDataStateProps<SFT>
+export const parseItemDataState = (
+  elementField: ParseItemDataStateProps
 ): ParseItemDataStateReturn => {
+  if (!elementField) {
+    throw new Error('no field provided');
+  }
+
   const dataState: any = {
     fieldName: elementField.fieldName,
     type: elementField.type,
-    value: elementField.defaultValue ?? undefined,
     defaultValue: elementField.defaultValue ?? undefined
   };
 
