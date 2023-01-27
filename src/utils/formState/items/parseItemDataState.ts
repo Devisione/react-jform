@@ -22,17 +22,17 @@ export type ParseItemDataStateReturn =
 //   : undefined;
 
 export const parseItemDataState = <SFT extends SchemaFieldTemplate>(
-  fieldConfig: ParseItemDataStateProps<SFT>
+  elementField: ParseItemDataStateProps<SFT>
 ): ParseItemDataStateReturn => {
   const dataState: any = {
-    fieldName: fieldConfig.fieldName,
-    type: fieldConfig.type,
-    value: fieldConfig.defaultValue ?? undefined,
-    defaultValue: fieldConfig.defaultValue ?? undefined
+    fieldName: elementField.fieldName,
+    type: elementField.type,
+    value: elementField.defaultValue ?? undefined,
+    defaultValue: elementField.defaultValue ?? undefined
   };
 
-  if (Reflect.has(fieldConfig, 'validations') && dataState) {
-    dataState.validations = fieldConfig.validations;
+  if (Reflect.has(elementField, 'validations') && dataState) {
+    dataState.validations = elementField.validations;
   }
 
   return dataState;

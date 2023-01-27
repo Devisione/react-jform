@@ -37,9 +37,8 @@ describe('generateItemsConfig', () => {
     const elementsConfig = generateElementsConfig<OneFieldSchemaFieldsTemplate>(fieldsConfig);
 
     expect(
-      generateItemsConfig<OneFieldSchemaFieldsTemplate>({
+      generateItemsConfig({
         elementsConfig,
-        fieldsConfig,
         parentFieldPath: FormValuesFieldPathRuntype.check('')
       })
     ).toEqual<FormStateItemsConfig>({
@@ -74,9 +73,8 @@ describe('generateItemsConfig', () => {
     const elementsConfig = generateElementsConfig<OneFieldArraySchemaFieldsTemplate>(fieldsConfig);
 
     expect(
-      generateItemsConfig<OneFieldArraySchemaFieldsTemplate>({
+      generateItemsConfig({
         elementsConfig,
-        fieldsConfig,
         parentFieldPath: FormValuesFieldPathRuntype.check('')
       })
     ).toEqual<FormStateItemsConfig>({

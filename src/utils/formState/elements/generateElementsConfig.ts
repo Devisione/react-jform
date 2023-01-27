@@ -2,32 +2,32 @@ import {
   FormStateElement,
   FormStateElementsConfig,
   FormStateFieldsConfig,
-  SchemaFieldName,
   SchemaFieldsTemplate,
   FormStateFieldsTypes,
-  NamesWithNestedPaths
+  FormStateFieldConfig,
+  SchemaFieldTemplate,
+  SchemaField
 } from '../../../types';
 import { ROOT_ID } from '../../../constants';
 
 export const generateElementsConfig = <SFT extends SchemaFieldsTemplate>(
   fieldsConfig: FormStateFieldsConfig<SFT>
 ): FormStateElementsConfig => {
-  const parseElement = <
-    FieldName extends Extract<keyof NamesWithNestedPaths<SFT>, SchemaFieldName>,
-    FieldConfig extends FormStateFieldsConfig<SFT>[FieldName]
-  >(
-    fieldName: FieldName,
-    fieldConfig: FieldConfig
-  ): FormStateElement => {
-    const element = {
-      field: fieldName
-    } as FormStateElement;
+  const parseElement = ({
+    // @ts-ignore
+    fieldsConfigsNames,
+    ...restFieldConfig
+  }: FormStateFieldConfig<
+    SchemaFieldTemplate,
+    SchemaField<SchemaFieldTemplate>
+  >): FormStateElement => {
+    const element: FormStateElement = {
+      field: restFieldConfig
+    };
 
-    if (fieldConfig.type === FormStateFieldsTypes.tuple) {
+    if (restFieldConfig.type === FormStateFieldsTypes.tuple) {
       // @ts-ignore
-      element.elements = fieldConfig.fieldsConfigsNames.map(fieldName =>
-        parseElement(fieldName, fieldsConfig[fieldName])
-      );
+      element.elements = fieldsConfigsNames.map(fieldName => parseElement(fieldsConfig[fieldName]));
     }
 
     return element;
@@ -36,7 +36,7 @@ export const generateElementsConfig = <SFT extends SchemaFieldsTemplate>(
   return {
     [ROOT_ID.id]: {
       elements: fieldsConfig.ROOT_ID.fieldsConfigsNames.map(fieldName =>
-        parseElement(fieldName, fieldsConfig[fieldName])
+        parseElement(fieldsConfig[fieldName])
       )
     }
   };
