@@ -2,6 +2,7 @@ import {
   FormState,
   FormStateAction,
   FormStateActionTypes,
+  FormStateAppendToArrayAction,
   FormStateUploadSchemaAction,
   FormValues,
   Schema,
@@ -19,6 +20,7 @@ export type UseFormStateProps<SFT extends SchemaFieldsTemplate> = {
 export type UseFormStateReturn<SFT extends SchemaFieldsTemplate> = {
   resetFormState: () => void;
   uploadSchema: (payload: FormStateUploadSchemaAction<SFT>['payload']) => void;
+  appendToArray: (payload: FormStateAppendToArrayAction['payload']) => void;
   state: FormState;
 };
 
@@ -46,6 +48,16 @@ export const useFormState = <SFT extends SchemaFieldsTemplate>({
     [dispatch]
   );
 
+  const appendToArray = useCallback(
+    (payload: FormStateAppendToArrayAction['payload']) => {
+      dispatch({
+        type: FormStateActionTypes.appendToArray,
+        payload
+      });
+    },
+    [dispatch]
+  );
+
   useEffect(() => {
     uploadSchema({
       schema,
@@ -56,6 +68,7 @@ export const useFormState = <SFT extends SchemaFieldsTemplate>({
   return {
     resetFormState,
     uploadSchema,
+    appendToArray,
     state
   };
 };

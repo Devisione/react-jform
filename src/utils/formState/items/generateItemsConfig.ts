@@ -15,8 +15,7 @@ import {
 } from '../../../types';
 import { parseItemDataState } from './parseItemDataState';
 import { ROOT_ID } from '../../../constants';
-import { concatPaths } from '../../paths';
-import { getByPath } from '../../../helpers';
+import { concatPaths, getByPath } from '../../../helpers';
 
 export type GenerateItemsConfigProps<SFT extends SchemaFieldsTemplate> = {
   elementsConfig: FormStateElementsConfig;

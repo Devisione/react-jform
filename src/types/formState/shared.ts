@@ -2,10 +2,12 @@ import { FormStateItemsConfig } from './items';
 import { Schema, SchemaFieldsTemplate } from '../schema';
 import { DeepPartial } from 'react-hook-form';
 import { FormValues } from '../formValues';
+import { FormValuesFieldPath } from '../paths';
 
 export enum FormStateActionTypes {
   'reset' = 'reset',
-  'uploadSchema' = 'uploadSchema'
+  'uploadSchema' = 'uploadSchema',
+  'appendToArray' = 'appendToArray'
 }
 
 export type FormStateResetAction = {
@@ -20,9 +22,18 @@ export type FormStateUploadSchemaAction<SFT extends SchemaFieldsTemplate> = {
   };
 };
 
+export type FormStateAppendToArrayAction = {
+  type: `${FormStateActionTypes.appendToArray}`;
+  payload: {
+    fieldPath: FormValuesFieldPath;
+    value: FormValues<SchemaFieldsTemplate>;
+  };
+};
+
 export type FormStateAction<SFT extends SchemaFieldsTemplate> =
   | FormStateResetAction
-  | FormStateUploadSchemaAction<SFT>;
+  | FormStateUploadSchemaAction<SFT>
+  | FormStateAppendToArrayAction;
 
 export type FormState = {
   itemsConfig: FormStateItemsConfig;

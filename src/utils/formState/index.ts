@@ -4,4 +4,4 @@ export * from './fields';
 export * from './elements';
 // items - структура ui и данных с экземплярами (ветвь может быть присутствовать в elements, но в items ее не будет, так как value - пустой обьект)
 export * from './items';
-export * from './shared';
+export * from './formStateReducer';
