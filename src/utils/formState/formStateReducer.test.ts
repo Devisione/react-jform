@@ -1,9 +1,15 @@
 import { formStateReducer } from './formStateReducer';
 import { FormState, FormStateActionTypes, FormValuesFieldPathRuntype } from '../../types';
 import { generateItemsConfig } from './items';
-import { oneFieldArraySchema, OneFieldArraySchemaFieldsTemplate } from '../../__mocks__';
+import {
+  oneFieldArraySchema,
+  OneFieldArraySchemaFieldsTemplate,
+  oneFieldSchema,
+  OneFieldSchemaFieldsTemplate
+} from '../../__mocks__';
 import { generateFieldsConfig } from './fields';
 import { generateElementsConfig } from './elements';
+import { ROOT_ID } from '../../constants';
 
 jest.mock('uuid', () => {
   let i = 0;
@@ -17,31 +23,56 @@ jest.mock('uuid', () => {
   };
 });
 
+const generateOneFieldState = () => {
+  const fieldsConfig = generateFieldsConfig<OneFieldSchemaFieldsTemplate>({
+    schemaFields: oneFieldSchema.fields,
+    asRoot: true
+  });
+  const elementsConfig = generateElementsConfig<OneFieldSchemaFieldsTemplate>(fieldsConfig);
+
+  const state: FormState = {
+    itemsConfig: generateItemsConfig({
+      elementsConfig,
+      parentFieldPath: FormValuesFieldPathRuntype.check(''),
+      values: {
+        some: 1
+      }
+    })
+  };
+
+  return state;
+};
+
+const generateOneFieldArrayState = () => {
+  const fieldsConfig = generateFieldsConfig<OneFieldArraySchemaFieldsTemplate>({
+    schemaFields: oneFieldArraySchema.fields,
+    asRoot: true
+  });
+  const elementsConfig = generateElementsConfig<OneFieldArraySchemaFieldsTemplate>(fieldsConfig);
+
+  const state: FormState = {
+    itemsConfig: generateItemsConfig({
+      elementsConfig,
+      parentFieldPath: FormValuesFieldPathRuntype.check(''),
+      values: {
+        others: [{ some: 1 }]
+      }
+    })
+  };
+
+  return state;
+};
+
 describe('formStateReducer', () => {
+  beforeEach(async () => {
+    const uuid = await import('uuid');
+    // @ts-ignore
+    uuid.clearIncrementor();
+  });
+
   describe('append to array', () => {
-    beforeEach(async () => {
-      const uuid = await import('uuid');
-      // @ts-ignore
-      uuid.clearIncrementor();
-    });
-
     test('', () => {
-      const fieldsConfig = generateFieldsConfig<OneFieldArraySchemaFieldsTemplate>({
-        schemaFields: oneFieldArraySchema.fields,
-        asRoot: true
-      });
-      const elementsConfig =
-        generateElementsConfig<OneFieldArraySchemaFieldsTemplate>(fieldsConfig);
-
-      const state: FormState = {
-        itemsConfig: generateItemsConfig({
-          elementsConfig,
-          parentFieldPath: FormValuesFieldPathRuntype.check(''),
-          values: {
-            others: [{ some: 1 }]
-          }
-        })
-      };
+      const state = generateOneFieldArrayState();
 
       expect(
         formStateReducer(state, {
@@ -81,6 +112,94 @@ describe('formStateReducer', () => {
             [FormValuesFieldPathRuntype.check('others.1.some')]: 'some4'
           }
         }
+      });
+    });
+  });
+  describe('remove item', () => {
+    describe('by path', () => {
+      test('flat item', () => {
+        const state = generateOneFieldState();
+
+        expect(
+          formStateReducer(state, {
+            type: FormStateActionTypes.removeItem,
+            payload: {
+              fieldPath: FormValuesFieldPathRuntype.check('some')
+            }
+          })
+        ).toEqual({
+          ...state,
+          itemsConfig: {
+            items: {
+              [ROOT_ID.id]: {
+                id: ROOT_ID.id,
+                itemsIds: []
+              }
+            },
+            itemsIdsMap: {
+              '': ROOT_ID.id
+            }
+          }
+        });
+      });
+      test('array', () => {
+        const state = generateOneFieldArrayState();
+
+        expect(
+          formStateReducer(state, {
+            type: FormStateActionTypes.removeItem,
+            payload: {
+              fieldPath: FormValuesFieldPathRuntype.check('others')
+            }
+          })
+        ).toEqual({
+          ...state,
+          itemsConfig: {
+            items: {
+              [ROOT_ID.id]: {
+                id: ROOT_ID.id,
+                itemsIds: []
+              }
+            },
+            itemsIdsMap: {
+              '': ROOT_ID.id
+            }
+          }
+        });
+      });
+      test('array child', () => {
+        const state = generateOneFieldArrayState();
+
+        expect(
+          formStateReducer(state, {
+            type: FormStateActionTypes.removeItem,
+            payload: {
+              fieldPath: FormValuesFieldPathRuntype.check('others.0')
+            }
+          })
+        ).toEqual({
+          ...state,
+          itemsConfig: {
+            items: {
+              [ROOT_ID.id]: {
+                id: ROOT_ID.id,
+                itemsIds: ['others0']
+              },
+              others0: {
+                id: 'others0',
+                dataState: expect.objectContaining({
+                  fieldName: 'others'
+                }),
+                itemsIds: [],
+                itemsTemplate: expect.objectContaining({})
+              }
+            },
+            itemsIdsMap: {
+              '': ROOT_ID.id,
+              others: 'others0'
+            }
+          }
+        });
       });
     });
   });

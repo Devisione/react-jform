@@ -7,7 +7,8 @@ import { FormValuesFieldPath } from '../paths';
 export enum FormStateActionTypes {
   'reset' = 'reset',
   'uploadSchema' = 'uploadSchema',
-  'appendToArray' = 'appendToArray'
+  'appendToArray' = 'appendToArray',
+  'removeItem' = 'removeItem'
 }
 
 export type FormStateResetAction = {
@@ -30,10 +31,16 @@ export type FormStateAppendToArrayAction = {
   };
 };
 
+export type FormStateRemoveItemAction = {
+  type: `${FormStateActionTypes.removeItem}`;
+  payload: { fieldPath: FormValuesFieldPath };
+};
+
 export type FormStateAction<SFT extends SchemaFieldsTemplate> =
   | FormStateResetAction
   | FormStateUploadSchemaAction<SFT>
-  | FormStateAppendToArrayAction;
+  | FormStateAppendToArrayAction
+  | FormStateRemoveItemAction;
 
 export type FormState = {
   itemsConfig: FormStateItemsConfig;

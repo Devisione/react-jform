@@ -2,13 +2,14 @@ import {
   FormState,
   FormStateAction,
   FormStateActionTypes,
+  FormStateItems,
   FormValuesFieldPathRuntype,
   SchemaFieldsTemplate
 } from '../../types';
 import { generateFieldsConfig } from './fields';
 import { generateElementsConfig } from './elements';
 import { generateItemsConfig, getItem } from './items';
-import { concatPaths } from '../../helpers';
+import { concatPaths, separatePath } from '../../helpers';
 import { ROOT_ID } from '../../constants';
 
 export const defaultFormState: FormState = {
@@ -91,6 +92,52 @@ export const formStateReducer = <SFT extends SchemaFieldsTemplate>(
             ...state.itemsConfig.itemsIdsMap,
             ...childrenItemsIdsMap
           }
+        }
+      };
+    }
+    case FormStateActionTypes.removeItem: {
+      const itemToRemoveFieldPath = action.payload.fieldPath;
+      const itemToRemove = getItem({
+        itemsConfig: state.itemsConfig,
+        fieldPath: itemToRemoveFieldPath
+      });
+
+      if (!itemToRemove) {
+        return state;
+      }
+
+      const remainingItemsIdsMap = Object.fromEntries(
+        Object.entries(state.itemsConfig.itemsIdsMap).filter(
+          ([fieldPath]) => !fieldPath.startsWith(itemToRemoveFieldPath)
+        )
+      );
+      const remainingItemsIds = Object.values(remainingItemsIdsMap);
+      const remainingItems = Object.fromEntries(
+        Object.entries(state.itemsConfig.items).filter(([itemId]) =>
+          remainingItemsIds.includes(itemId)
+        )
+      ) as FormStateItems;
+
+      const itemToRemoveParentPath = separatePath(itemToRemoveFieldPath).tail;
+      const itemToRemoveParent = getItem({
+        itemsConfig: {
+          items: remainingItems,
+          itemsIdsMap: remainingItemsIdsMap
+        },
+        fieldPath: itemToRemoveParentPath
+      });
+
+      if (itemToRemoveParent && remainingItems[itemToRemoveParent.id].itemsIds) {
+        remainingItems[itemToRemoveParent.id].itemsIds = remainingItems[
+          itemToRemoveParent.id
+        ].itemsIds!.filter(itemId => itemId !== itemToRemove.id);
+      }
+
+      return {
+        ...state,
+        itemsConfig: {
+          items: remainingItems,
+          itemsIdsMap: remainingItemsIdsMap
         }
       };
     }
