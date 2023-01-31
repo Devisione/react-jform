@@ -24,7 +24,7 @@ export type UseFormReturn<
   SFT extends SchemaFieldsTemplate,
   FieldsNames = Extract<keyof NamesWithNestedPaths<SFT>, SchemaFieldName>
 > = Pick<UseFormReturnRHF<FormValues<SFT>>, 'register'> &
-  Pick<UseFormStateReturn<SFT>, 'appendToArray'> & {
+  Pick<UseFormStateReturn<SFT>, 'appendToArray' | 'removeItem'> & {
     getItem: (fieldPath: FieldsNames) => FormStateFormattedItem | undefined;
   };
 
@@ -32,7 +32,7 @@ export const useForm = <SFT extends SchemaFieldsTemplate>({
   schema,
   defaultValues
 }: UseFormProps<SFT>): UseFormReturn<SFT> => {
-  const { state, appendToArray } = useFormState<SFT>({ schema, defaultValues });
+  const { state, appendToArray, removeItem } = useFormState<SFT>({ schema, defaultValues });
   const formMethodsRHF = useFormRHF<FormValues<SFT>>({
     defaultValues
   });
@@ -55,6 +55,7 @@ export const useForm = <SFT extends SchemaFieldsTemplate>({
 
   return {
     appendToArray,
+    removeItem,
     register,
     getItem
   };

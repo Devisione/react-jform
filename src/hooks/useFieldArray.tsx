@@ -2,6 +2,7 @@ import { UseFieldArrayProps as UseRHFFieldArrayProps } from 'react-hook-form';
 import { FormValue, FormValuesFieldPathRuntype, SchemaFieldArrayTemplate } from '../types';
 import { useCallback } from 'react';
 import { useFormContext } from './useFormContext';
+import { concatPaths } from '../helpers';
 
 type UseFieldArrayProps<SFT extends SchemaFieldArrayTemplate> = Pick<
   UseRHFFieldArrayProps<FormValue<SFT>>,
@@ -20,7 +21,7 @@ export type UseFieldArrayReturn<SFT extends SchemaFieldArrayTemplate> = {
 export const useFieldArray = <SFT extends SchemaFieldArrayTemplate>({
   name
 }: UseFieldArrayProps<SFT>): UseFieldArrayReturn<SFT> => {
-  const { appendToArray } = useFormContext();
+  const { appendToArray, removeItem } = useFormContext();
   const fieldPath = FormValuesFieldPathRuntype.check(name);
 
   const append = useCallback<UseFieldArrayReturn<SFT>['append']>(
@@ -38,7 +39,14 @@ export const useFieldArray = <SFT extends SchemaFieldArrayTemplate>({
   );
 
   const prepend = useCallback(() => {}, [fieldPath]);
-  const remove = useCallback(() => {}, [fieldPath]);
+  const remove = useCallback<UseFieldArrayReturn<SFT>['remove']>(
+    index => {
+      removeItem({
+        fieldPath: concatPaths(fieldPath, FormValuesFieldPathRuntype.check(index.toString()))
+      });
+    },
+    [fieldPath, removeItem]
+  );
   const update = useCallback(() => {}, [fieldPath]);
 
   return {
