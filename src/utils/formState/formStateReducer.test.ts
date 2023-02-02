@@ -161,6 +161,54 @@ describe('formStateReducer', () => {
       });
     });
   });
+  describe('update in array', () => {
+    test('', () => {
+      const state = generateOneFieldArrayState();
+
+      expect(
+        formStateReducer(state, {
+          type: FormStateActionTypes.updateInArray,
+          payload: {
+            fieldPath: FormValuesFieldPathRuntype.check('others.0'),
+            value: { some: 2 }
+          }
+        })
+      ).toEqual({
+        ...state,
+        itemsConfig: {
+          ...state.itemsConfig,
+          items: {
+            [ROOT_ID.id]: {
+              id: ROOT_ID.id,
+              itemsIds: ['others0']
+            },
+            others0: {
+              ...state.itemsConfig.items.others0,
+              itemsIds: ['3']
+            },
+            '3': {
+              id: '3',
+              itemsIds: ['some4']
+            },
+            some4: {
+              id: 'some4',
+              dataState: {
+                fieldName: 'some',
+                type: oneFieldArraySchema.fields.others.fields.some.type,
+                validations: oneFieldArraySchema.fields.others.fields.some.validations,
+                defaultValue: oneFieldArraySchema.fields.others.fields.some.defaultValue
+              }
+            }
+          },
+          itemsIdsMap: {
+            ...state.itemsConfig.itemsIdsMap,
+            [FormValuesFieldPathRuntype.check('others.0')]: '3',
+            [FormValuesFieldPathRuntype.check('others.0.some')]: 'some4'
+          }
+        }
+      });
+    });
+  });
   describe('remove item', () => {
     describe('by path', () => {
       test('flat item', () => {

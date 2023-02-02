@@ -5,6 +5,7 @@ import {
   FormStateAppendToArrayAction,
   FormStatePrependToArrayAction,
   FormStateRemoveItemAction,
+  FormStateUpdateInArrayAction,
   FormStateUploadSchemaAction,
   FormValues,
   Schema,
@@ -24,6 +25,7 @@ export type UseFormStateReturn<SFT extends SchemaFieldsTemplate> = {
   uploadSchema: (payload: FormStateUploadSchemaAction<SFT>['payload']) => void;
   appendToArray: (payload: FormStateAppendToArrayAction['payload']) => void;
   prependToArray: (payload: FormStatePrependToArrayAction['payload']) => void;
+  updateInArray: (payload: FormStateUpdateInArrayAction['payload']) => void;
   removeItem: (payload: FormStateRemoveItemAction['payload']) => void;
   state: FormState;
 };
@@ -72,6 +74,16 @@ export const useFormState = <SFT extends SchemaFieldsTemplate>({
     [dispatch]
   );
 
+  const updateInArray = useCallback<UseFormStateReturn<SFT>['updateInArray']>(
+    payload => {
+      dispatch({
+        type: FormStateActionTypes.updateInArray,
+        payload
+      });
+    },
+    [dispatch]
+  );
+
   const removeItem = useCallback<UseFormStateReturn<SFT>['removeItem']>(
     payload => {
       dispatch({
@@ -94,6 +106,7 @@ export const useFormState = <SFT extends SchemaFieldsTemplate>({
     uploadSchema,
     appendToArray,
     prependToArray,
+    updateInArray,
     removeItem,
     state
   };

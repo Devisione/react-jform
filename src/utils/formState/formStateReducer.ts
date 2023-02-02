@@ -157,6 +157,35 @@ export const formStateReducer = <SFT extends SchemaFieldsTemplate>(
         }
       });
     }
+    case FormStateActionTypes.updateInArray: {
+      const { value, fieldPath: childPath } = action.payload;
+
+      const { head: rawChildIndex, tail: arrayPath } = separatePath(childPath);
+      const childIndex = parseInt(rawChildIndex, 10);
+      const childItem = getItem({ itemsConfig: state.itemsConfig, fieldPath: childPath });
+      const arrayItem = getItem({ itemsConfig: state.itemsConfig, fieldPath: arrayPath });
+
+      if (!arrayItem?.itemsTemplate || Number.isNaN(childIndex) || !childItem) {
+        return state;
+      }
+
+      const stateWithRemovedChild = formStateReducer(state, {
+        type: FormStateActionTypes.removeItem,
+        payload: {
+          fieldPath: childPath
+        }
+      });
+
+      console.log('>>> stateWithRemovedChild', stateWithRemovedChild.itemsConfig.items);
+
+      return formStateReducer(stateWithRemovedChild, {
+        type: FormStateActionTypes.addToArray,
+        payload: {
+          fieldPath: childPath,
+          value
+        }
+      });
+    }
     case FormStateActionTypes.removeItem: {
       const itemToRemoveFieldPath = action.payload.fieldPath;
       const itemToRemove = getItem({

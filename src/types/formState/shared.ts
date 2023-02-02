@@ -10,6 +10,7 @@ export enum FormStateActionTypes {
   'addToArray' = 'addToArray',
   'appendToArray' = 'appendToArray',
   'prependToArray' = 'prependToArray',
+  'updateInArray' = 'updateInArray',
   'removeItem' = 'removeItem',
   'updateItem' = 'updateItem'
 }
@@ -67,12 +68,21 @@ export type FormStatePrependToArrayAction = {
   };
 };
 
+export type FormStateUpdateInArrayAction = {
+  type: `${FormStateActionTypes.updateInArray}`;
+  payload: {
+    fieldPath: FormValuesFieldPath;
+    value: FormValues<SchemaFieldsTemplate>;
+  };
+};
+
 export type FormStateAction<SFT extends SchemaFieldsTemplate> =
   | FormStateResetAction
   | FormStateUploadSchemaAction<SFT>
   | FormStateAddToArrayAction
   | FormStateAppendToArrayAction
   | FormStatePrependToArrayAction
+  | FormStateUpdateInArrayAction
   | FormStateRemoveItemAction
   | FormStateUpdateItemAction;
 

@@ -11,17 +11,19 @@ type UseFieldArrayProps<SFT extends SchemaFieldArrayTemplate> = Pick<
   name: string;
 };
 
+type Options = { fixValue?: boolean };
+
 export type UseFieldArrayReturn<SFT extends SchemaFieldArrayTemplate> = {
-  append: (value: FormValue<SFT>, options: { fixValue?: boolean }) => void;
-  prepend: (value: FormValue<SFT>, options: { fixValue?: boolean }) => void;
+  append: (value: FormValue<SFT>, options: Options) => void;
+  prepend: (value: FormValue<SFT>, options: Options) => void;
   remove: (index: number) => void;
-  update: (index: number, value: FormValue<SFT>) => void;
+  update: (index: number, value: FormValue<SFT>, options: Options) => void;
 };
 
 export const useFieldArray = <SFT extends SchemaFieldArrayTemplate>({
   name
 }: UseFieldArrayProps<SFT>): UseFieldArrayReturn<SFT> => {
-  const { appendToArray, prependToArray, removeItem } = useFormContext();
+  const { appendToArray, prependToArray, updateInArray, removeItem } = useFormContext();
   const fieldPath = FormValuesFieldPathRuntype.check(name);
 
   const append = useCallback<UseFieldArrayReturn<SFT>['append']>(
@@ -60,7 +62,20 @@ export const useFieldArray = <SFT extends SchemaFieldArrayTemplate>({
     },
     [fieldPath, removeItem]
   );
-  const update = useCallback(() => {}, [fieldPath]);
+
+  const update = useCallback<UseFieldArrayReturn<SFT>['update']>(
+    (index, rawValue, options) => {
+      // TODO: сделать фикс значений
+      const value = options?.fixValue ? (() => rawValue)() : rawValue;
+
+      updateInArray({
+        fieldPath: concatPaths(fieldPath, FormValuesFieldPathRuntype.check(index.toString())),
+        // @ts-ignore
+        value
+      });
+    },
+    [fieldPath, updateInArray]
+  );
 
   return {
     append,
