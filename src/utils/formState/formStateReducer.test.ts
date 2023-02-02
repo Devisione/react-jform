@@ -203,4 +203,33 @@ describe('formStateReducer', () => {
       });
     });
   });
+  describe('update item', () => {
+    test('', () => {
+      const state = generateOneFieldState();
+
+      expect(
+        formStateReducer(state, {
+          type: FormStateActionTypes.updateItem,
+          payload: {
+            fieldPath: FormValuesFieldPathRuntype.check('some'),
+            updateData: {
+              itemsIds: ['test']
+            }
+          }
+        })
+      ).toEqual({
+        ...state,
+        itemsConfig: {
+          ...state.itemsConfig,
+          items: {
+            ...state.itemsConfig.items,
+            some0: {
+              ...state.itemsConfig.items.some0,
+              itemsIds: ['test']
+            }
+          }
+        }
+      });
+    });
+  });
 });

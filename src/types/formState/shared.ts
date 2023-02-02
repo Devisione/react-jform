@@ -1,4 +1,4 @@
-import { FormStateItemsConfig } from './items';
+import { FormStateItem, FormStateItemsConfig } from './items';
 import { Schema, SchemaFieldsTemplate } from '../schema';
 import { DeepPartial } from 'react-hook-form';
 import { FormValues } from '../formValues';
@@ -8,7 +8,8 @@ export enum FormStateActionTypes {
   'reset' = 'reset',
   'uploadSchema' = 'uploadSchema',
   'appendToArray' = 'appendToArray',
-  'removeItem' = 'removeItem'
+  'removeItem' = 'removeItem',
+  'updateItem' = 'updateItem'
 }
 
 export type FormStateResetAction = {
@@ -36,11 +37,24 @@ export type FormStateRemoveItemAction = {
   payload: { fieldPath: FormValuesFieldPath };
 };
 
+export type FormStateUpdateItemAction = {
+  type: `${FormStateActionTypes.updateItem}`;
+  payload: {
+    fieldPath: FormValuesFieldPath;
+    updateData: DeepPartial<
+      Omit<FormStateItem, 'id' | 'dataState'> & {
+        dataState?: Omit<FormStateItem['dataState'], 'fieldName' | 'type'>;
+      }
+    >;
+  };
+};
+
 export type FormStateAction<SFT extends SchemaFieldsTemplate> =
   | FormStateResetAction
   | FormStateUploadSchemaAction<SFT>
   | FormStateAppendToArrayAction
-  | FormStateRemoveItemAction;
+  | FormStateRemoveItemAction
+  | FormStateUpdateItemAction;
 
 export type FormState = {
   itemsConfig: FormStateItemsConfig;

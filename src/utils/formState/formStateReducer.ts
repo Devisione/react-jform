@@ -2,6 +2,7 @@ import {
   FormState,
   FormStateAction,
   FormStateActionTypes,
+  FormStateItem,
   FormStateItems,
   FormValuesFieldPathRuntype,
   SchemaFieldsTemplate
@@ -11,6 +12,7 @@ import { generateElementsConfig } from './elements';
 import { generateItemsConfig, getItem } from './items';
 import { concatPaths, separatePath } from '../../helpers';
 import { ROOT_ID } from '../../constants';
+import { mergeDeep } from '../../helpers/mergeDeep';
 
 export const defaultFormState: FormState = {
   itemsConfig: {
@@ -138,6 +140,31 @@ export const formStateReducer = <SFT extends SchemaFieldsTemplate>(
         itemsConfig: {
           items: remainingItems,
           itemsIdsMap: remainingItemsIdsMap
+        }
+      };
+    }
+    case FormStateActionTypes.updateItem: {
+      const { fieldPath, updateData } = action.payload;
+
+      const item = getItem({
+        itemsConfig: state.itemsConfig,
+        fieldPath: fieldPath
+      });
+
+      if (!item) {
+        return state;
+      }
+
+      const updatedItem = mergeDeep(item, updateData) as FormStateItem;
+
+      return {
+        ...state,
+        itemsConfig: {
+          ...state.itemsConfig,
+          items: {
+            ...state.itemsConfig.items,
+            [updatedItem.id]: updatedItem
+          }
         }
       };
     }
