@@ -13,7 +13,7 @@ type UseFieldArrayProps<SFT extends SchemaFieldArrayTemplate> = Pick<
 
 export type UseFieldArrayReturn<SFT extends SchemaFieldArrayTemplate> = {
   append: (value: FormValue<SFT>, options: { fixValue?: boolean }) => void;
-  prepend: (value: FormValue<SFT>) => void;
+  prepend: (value: FormValue<SFT>, options: { fixValue?: boolean }) => void;
   remove: (index: number) => void;
   update: (index: number, value: FormValue<SFT>) => void;
 };
@@ -21,7 +21,7 @@ export type UseFieldArrayReturn<SFT extends SchemaFieldArrayTemplate> = {
 export const useFieldArray = <SFT extends SchemaFieldArrayTemplate>({
   name
 }: UseFieldArrayProps<SFT>): UseFieldArrayReturn<SFT> => {
-  const { appendToArray, removeItem } = useFormContext();
+  const { appendToArray, prependToArray, removeItem } = useFormContext();
   const fieldPath = FormValuesFieldPathRuntype.check(name);
 
   const append = useCallback<UseFieldArrayReturn<SFT>['append']>(
@@ -38,7 +38,20 @@ export const useFieldArray = <SFT extends SchemaFieldArrayTemplate>({
     [fieldPath, appendToArray]
   );
 
-  const prepend = useCallback(() => {}, [fieldPath]);
+  const prepend = useCallback<UseFieldArrayReturn<SFT>['prepend']>(
+    (rawValue, options) => {
+      // TODO: сделать фикс значений
+      const value = options?.fixValue ? (() => rawValue)() : rawValue;
+
+      prependToArray({
+        fieldPath,
+        // @ts-ignore
+        value
+      });
+    },
+    [fieldPath, prependToArray]
+  );
+
   const remove = useCallback<UseFieldArrayReturn<SFT>['remove']>(
     index => {
       removeItem({

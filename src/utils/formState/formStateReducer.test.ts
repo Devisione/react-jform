@@ -69,7 +69,53 @@ describe('formStateReducer', () => {
     // @ts-ignore
     uuid.clearIncrementor();
   });
+  describe('prepend to array', () => {
+    test('', () => {
+      const state = generateOneFieldArrayState();
 
+      expect(
+        formStateReducer(state, {
+          type: FormStateActionTypes.prependToArray,
+          payload: {
+            fieldPath: FormValuesFieldPathRuntype.check('others'),
+            value: { some: 2 }
+          }
+        })
+      ).toEqual({
+        ...state,
+        itemsConfig: {
+          ...state.itemsConfig,
+          items: {
+            ...state.itemsConfig.items,
+            others0: {
+              ...state.itemsConfig.items.others0,
+              itemsIds: ['3', '1']
+            },
+            '3': {
+              id: '3',
+              itemsIds: ['some4']
+            },
+            some4: {
+              id: 'some4',
+              dataState: {
+                fieldName: 'some',
+                type: oneFieldArraySchema.fields.others.fields.some.type,
+                validations: oneFieldArraySchema.fields.others.fields.some.validations,
+                defaultValue: oneFieldArraySchema.fields.others.fields.some.defaultValue
+              }
+            }
+          },
+          itemsIdsMap: {
+            ...state.itemsConfig.itemsIdsMap,
+            [FormValuesFieldPathRuntype.check('others.0')]: '3',
+            [FormValuesFieldPathRuntype.check('others.0.some')]: 'some4',
+            [FormValuesFieldPathRuntype.check('others.1')]: '1',
+            [FormValuesFieldPathRuntype.check('others.1.some')]: 'some2'
+          }
+        }
+      });
+    });
+  });
   describe('append to array', () => {
     test('', () => {
       const state = generateOneFieldArrayState();

@@ -7,7 +7,9 @@ import { FormValuesFieldPath } from '../paths';
 export enum FormStateActionTypes {
   'reset' = 'reset',
   'uploadSchema' = 'uploadSchema',
+  'addToArray' = 'addToArray',
   'appendToArray' = 'appendToArray',
+  'prependToArray' = 'prependToArray',
   'removeItem' = 'removeItem',
   'updateItem' = 'updateItem'
 }
@@ -21,14 +23,6 @@ export type FormStateUploadSchemaAction<SFT extends SchemaFieldsTemplate> = {
   payload: {
     schema: Schema<SFT>;
     defaultValues?: DeepPartial<FormValues<SFT>>;
-  };
-};
-
-export type FormStateAppendToArrayAction = {
-  type: `${FormStateActionTypes.appendToArray}`;
-  payload: {
-    fieldPath: FormValuesFieldPath;
-    value: FormValues<SchemaFieldsTemplate>;
   };
 };
 
@@ -49,10 +43,36 @@ export type FormStateUpdateItemAction = {
   };
 };
 
+export type FormStateAddToArrayAction = {
+  type: `${FormStateActionTypes.addToArray}`;
+  payload: {
+    fieldPath: FormValuesFieldPath;
+    value: FormValues<SchemaFieldsTemplate>;
+  };
+};
+
+export type FormStateAppendToArrayAction = {
+  type: `${FormStateActionTypes.appendToArray}`;
+  payload: {
+    fieldPath: FormValuesFieldPath;
+    value: FormValues<SchemaFieldsTemplate>;
+  };
+};
+
+export type FormStatePrependToArrayAction = {
+  type: `${FormStateActionTypes.prependToArray}`;
+  payload: {
+    fieldPath: FormValuesFieldPath;
+    value: FormValues<SchemaFieldsTemplate>;
+  };
+};
+
 export type FormStateAction<SFT extends SchemaFieldsTemplate> =
   | FormStateResetAction
   | FormStateUploadSchemaAction<SFT>
+  | FormStateAddToArrayAction
   | FormStateAppendToArrayAction
+  | FormStatePrependToArrayAction
   | FormStateRemoveItemAction
   | FormStateUpdateItemAction;
 
