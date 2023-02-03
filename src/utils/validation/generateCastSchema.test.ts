@@ -1,10 +1,10 @@
-import { generateFieldsConfig } from '../../formState';
+import { generateFieldsConfig } from '../formState';
 import {
   oneFieldArraySchema,
   OneFieldArraySchemaFieldsTemplate,
   oneFieldSchema,
   OneFieldSchemaFieldsTemplate
-} from '../../../__mocks__';
+} from '../../__mocks__';
 import { generateCastSchema } from './generateCastSchema';
 
 describe('generateCastSchema', () => {

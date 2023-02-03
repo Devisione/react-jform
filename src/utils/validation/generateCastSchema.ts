@@ -1,4 +1,4 @@
-import { ROOT_ID } from '../../../constants';
+import { ROOT_ID } from '../../constants';
 import {
   FormStateFieldConfig,
   FormStateFieldsConfig,
@@ -8,9 +8,9 @@ import {
   SchemaFieldNestedTemplate,
   SchemaFieldsTemplate,
   SchemaFieldTemplate
-} from '../../../types';
+} from '../../types';
 import * as yup from 'yup';
-import { addYupValidationToSchema } from '../validations';
+import { addYupValidationToSchema } from './validations';
 
 export type GenerateCastSchemaProps<SFT extends SchemaFieldsTemplate> = FormStateFieldsConfig<SFT>;
 
