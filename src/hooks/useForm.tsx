@@ -12,7 +12,7 @@ import {
   useForm as useFormRHF,
   UseFormReturn as UseFormReturnRHF
 } from 'react-hook-form';
-import { useFormState } from './useFormState';
+import { useFormState, UseFormStateReturn } from './useFormState';
 import { formatItem, getItem as getItemUtils } from '../utils';
 
 export type UseFormProps<SFT extends SchemaFieldsTemplate> = {
@@ -23,26 +23,33 @@ export type UseFormProps<SFT extends SchemaFieldsTemplate> = {
 export type UseFormReturn<
   SFT extends SchemaFieldsTemplate,
   FieldsNames = Extract<keyof NamesWithNestedPaths<SFT>, SchemaFieldName>
-> = Pick<UseFormReturnRHF<FormValues<SFT>>, 'register'> & {
-  getItem: (itemPath: FieldsNames) => FormStateFormattedItem | undefined;
-};
+> = Pick<UseFormReturnRHF<FormValues<SFT>>, 'register'> &
+  Pick<
+    UseFormStateReturn<SFT>,
+    'appendToArray' | 'prependToArray' | 'updateInArray' | 'removeItem'
+  > & {
+    getItem: (fieldPath: FieldsNames) => FormStateFormattedItem | undefined;
+  };
 
 export const useForm = <SFT extends SchemaFieldsTemplate>({
   schema,
   defaultValues
 }: UseFormProps<SFT>): UseFormReturn<SFT> => {
-  const { state } = useFormState<SFT>({ schema, defaultValues });
+  const { state, appendToArray, prependToArray, updateInArray, removeItem } = useFormState<SFT>({
+    schema,
+    defaultValues
+  });
   const formMethodsRHF = useFormRHF<FormValues<SFT>>({
     defaultValues
   });
   const { register } = formMethodsRHF;
 
   const getItem = <FieldName extends Extract<keyof NamesWithNestedPaths<SFT>, SchemaFieldName>>(
-    itemPath: FieldName
+    fieldPath: FieldName
   ) => {
     const item = getItemUtils({
       itemsConfig: state.itemsConfig,
-      itemPath: FormValuesFieldPathRuntype.check(itemPath)
+      fieldPath: FormValuesFieldPathRuntype.check(fieldPath)
     });
 
     if (!item) {
@@ -53,6 +60,10 @@ export const useForm = <SFT extends SchemaFieldsTemplate>({
   };
 
   return {
+    appendToArray,
+    prependToArray,
+    updateInArray,
+    removeItem,
     register,
     getItem
   };

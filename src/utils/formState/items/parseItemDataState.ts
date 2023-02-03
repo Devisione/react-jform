@@ -1,14 +1,6 @@
-import {
-  FormStateFieldConfig,
-  FormStateItemDataState,
-  SchemaField,
-  SchemaFieldTemplate
-} from '../../../types';
+import { FormStateElement, FormStateItemDataState } from '../../../types';
 
-export type ParseItemDataStateProps<SFT extends SchemaFieldTemplate> = FormStateFieldConfig<
-  SFT,
-  SchemaField<SFT>
->;
+export type ParseItemDataStateProps = FormStateElement['field'];
 
 export type ParseItemDataStateReturn =
   //   <
@@ -21,18 +13,21 @@ export type ParseItemDataStateReturn =
 //   ? FormStateItemDataState<FSFC>
 //   : undefined;
 
-export const parseItemDataState = <SFT extends SchemaFieldTemplate>(
-  fieldConfig: ParseItemDataStateProps<SFT>
+export const parseItemDataState = (
+  elementField: ParseItemDataStateProps
 ): ParseItemDataStateReturn => {
+  if (!elementField) {
+    throw new Error('no field provided');
+  }
+
   const dataState: any = {
-    fieldName: fieldConfig.fieldName,
-    type: fieldConfig.type,
-    value: fieldConfig.defaultValue ?? undefined,
-    defaultValue: fieldConfig.defaultValue ?? undefined
+    fieldName: elementField.fieldName,
+    type: elementField.type,
+    defaultValue: elementField.defaultValue ?? undefined
   };
 
-  if (Reflect.has(fieldConfig, 'validations') && dataState) {
-    dataState.validations = fieldConfig.validations;
+  if (Reflect.has(elementField, 'validations') && dataState) {
+    dataState.validations = elementField.validations;
   }
 
   return dataState;

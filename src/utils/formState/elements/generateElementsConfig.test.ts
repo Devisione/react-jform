@@ -1,5 +1,5 @@
 import { generateElementsConfig } from './generateElementsConfig';
-import { generateFieldsConfig } from '../fields/generateFieldsConfig';
+import { generateFieldsConfig } from '../fields';
 import {
   oneFieldArraySchema,
   OneFieldArraySchemaFieldsTemplate,
@@ -22,7 +22,7 @@ describe('generateElementsConfig', function () {
       [ROOT_ID.id]: {
         elements: [
           {
-            field: 'some'
+            field: fieldsConfig.some
           }
         ]
       }
@@ -31,7 +31,12 @@ describe('generateElementsConfig', function () {
 
   test('nested array field', () => {
     const fieldsConfig = generateFieldsConfig({
-      schemaFields: oneFieldArraySchema.fields,
+      schemaFields: {
+        others: {
+          ...oneFieldArraySchema.fields.others,
+          defaultValue: []
+        }
+      },
       asRoot: true
     });
 
@@ -41,10 +46,20 @@ describe('generateElementsConfig', function () {
       [ROOT_ID.id]: {
         elements: [
           {
-            field: 'others',
+            field: {
+              defaultValue: fieldsConfig.others.defaultValue,
+              fieldName: fieldsConfig.others.fieldName,
+              validations: fieldsConfig.others.validations,
+              type: fieldsConfig.others.type
+            },
             elements: [
               {
-                field: 'some'
+                field: {
+                  defaultValue: fieldsConfig.some.defaultValue,
+                  fieldName: fieldsConfig.some.fieldName,
+                  validations: fieldsConfig.some.validations,
+                  type: fieldsConfig.some.type
+                }
               }
             ]
           }

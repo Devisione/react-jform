@@ -7,13 +7,13 @@ import {
 
 export type GetItemProps = {
   itemsConfig: FormStateItemsConfig;
-  itemPath: FormValuesFieldPath;
+  fieldPath: FormValuesFieldPath;
 };
 
 export type GetItemReturn = FormStateItem | undefined;
 
-export const getItem = ({ itemsConfig, itemPath }: GetItemProps): GetItemReturn => {
-  const itemId = itemsConfig.itemsIdsMap[FormValuesFieldPathRuntype.check(itemPath)];
+export const getItem = ({ itemsConfig, fieldPath }: GetItemProps): GetItemReturn => {
+  const itemId = itemsConfig.itemsIdsMap[FormValuesFieldPathRuntype.check(fieldPath)];
 
   return itemsConfig.items[itemId];
 };
