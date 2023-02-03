@@ -14,6 +14,9 @@ import {
 } from 'react-hook-form';
 import { useFormState, UseFormStateReturn } from './useFormState';
 import { formatItem, getItem as getItemUtils } from '../utils';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useMemo } from 'react';
+import { generateValidationConfig, generateValidationSchema } from '../utils/validation';
 
 export type UseFormProps<SFT extends SchemaFieldsTemplate> = {
   schema: Schema<SFT>;
@@ -23,7 +26,7 @@ export type UseFormProps<SFT extends SchemaFieldsTemplate> = {
 export type UseFormReturn<
   SFT extends SchemaFieldsTemplate,
   FieldsNames = Extract<keyof NamesWithNestedPaths<SFT>, SchemaFieldName>
-> = Pick<UseFormReturnRHF<FormValues<SFT>>, 'register'> &
+> = Pick<UseFormReturnRHF<FormValues<SFT>>, 'register' | 'handleSubmit'> &
   Pick<
     UseFormStateReturn<SFT>,
     'appendToArray' | 'prependToArray' | 'updateInArray' | 'removeItem'
@@ -39,10 +42,18 @@ export const useForm = <SFT extends SchemaFieldsTemplate>({
     schema,
     defaultValues
   });
+
+  const validationSchema = useMemo(() => {
+    const validationConfig = generateValidationConfig(state.itemsConfig);
+
+    return generateValidationSchema(validationConfig);
+  }, [state.itemsConfig]);
+
   const formMethodsRHF = useFormRHF<FormValues<SFT>>({
-    defaultValues
+    defaultValues,
+    resolver: yupResolver(validationSchema)
   });
-  const { register } = formMethodsRHF;
+  const { register, handleSubmit } = formMethodsRHF;
 
   const getItem = <FieldName extends Extract<keyof NamesWithNestedPaths<SFT>, SchemaFieldName>>(
     fieldPath: FieldName
@@ -65,6 +76,7 @@ export const useForm = <SFT extends SchemaFieldsTemplate>({
     updateInArray,
     removeItem,
     register,
+    handleSubmit,
     getItem
   };
 };
